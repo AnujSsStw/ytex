@@ -13,10 +13,11 @@ export default function handler(
     const { userId } = req.body;
 
     const token = jwt.sign({ userId }, "sheeeeee", {
-      expiresIn: "100d",
+      expiresIn: "7d",
     });
 
     res.status(200).json({ res: token, error: null });
+    return;
   }
   res.status(400).json({ error: "Invalid request", res: null });
 }
