@@ -11,32 +11,10 @@ export const sendMails = internalMutation({
       const { email, prefrence, categoryMap } = user;
       const pref = picRandom(prefrence) as string;
 
-      if (categoryMap[pref].length === 0) {
-        // send user mail saying no videos in this category and ask them to update prefrence
-        const randomYt_id = categoryMap["random"];
-
-        if (randomYt_id.length === 0) {
-          // all videos watched and no videos in random category too so send mail saying no videos left
-        } else {
-          const yt = await ctx.db.get(randomYt_id.pop() as Id<"yt">);
-
-          if (!yt) continue;
-          await ctx.scheduler.runAfter(0, internal.yt.updateYTandUser, {
-            userId: user._id,
-            id: yt._id,
-          });
-
-          await ctx.scheduler.runAfter(0, internal.openAi.transcribe, {
-            email: email,
-            ytId: yt.id,
-            channelTitle: yt.channelTitle,
-            thumbnailLink: yt.thumbnailLink,
-            title: yt.title,
-            userName: user.name,
-          });
-        }
-      } else {
+      // have data
+      if (categoryMap[pref].length !== 0) {
         const videoId = picRandom(categoryMap[pref]);
+        console.log(`From videos in rando${pref} category`);
         const yt = await ctx.db.get(videoId);
 
         if (!yt) continue;
@@ -53,6 +31,31 @@ export const sendMails = internalMutation({
           title: yt.title,
           userName: user.name,
         });
+      } else {
+        // no data so get data from random
+        // send user mail saying no videos in this category and ask them to update prefrence
+        const randomYt_ids = categoryMap["Random"];
+        if (randomYt_ids.length === 0) {
+          // all videos watched and no videos in random category too so send mail saying no videos left
+          console.log("no videos left");
+        } else {
+          console.log("From videos in random category");
+
+          const yt = await ctx.db.get(randomYt_ids.pop() as Id<"yt">);
+          if (!yt) continue;
+          await ctx.scheduler.runAfter(0, internal.yt.updateYTandUser, {
+            userId: user._id,
+            id: yt._id,
+          });
+          await ctx.scheduler.runAfter(0, internal.openAi.transcribe, {
+            email: email,
+            ytId: yt.id,
+            channelTitle: yt.channelTitle,
+            thumbnailLink: yt.thumbnailLink,
+            title: yt.title,
+            userName: user.name,
+          });
+        }
       }
     }
   },

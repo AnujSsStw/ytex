@@ -40,36 +40,37 @@ export const transcribe = internalAction({
       .join("\n");
 
     const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo", // "gpt-4" also works, but is so slow!
+      model: "gpt-3.5-turbo-16k", // "gpt-4" also works, but is so slow!
       messages: [
         {
           role: "system",
-          content:
-            "You will be provided a Paragraph. You need to write a summary and Bullet summary of the following paragraph.",
+          content: `You will be provided a Paragraph. You need to write a summary and Bullet summary of the following paragraph. Use the author's name ${args.channelTitle} if you want to refer to the author in your summary.`,
         },
         {
           // Pass on the chat user's message to GPT
           role: "user",
-          content: `By ${args.channelTitle} \n\n ${texts}`,
+          content: texts,
         },
       ],
     });
 
     // Pull the message content out of the response
     const messageContent = response.choices[0].message?.content;
+    const payload = {
+      email: args.email,
+      summary: messageContent,
+      title: args.title,
+      videoId: args.ytId,
+      name: args.userName,
+      bannerLink: args.thumbnailLink,
+      channelTitle: args.channelTitle,
+    };
+    console.log(payload);
 
     //   send the msgcontent to the /api/mail endpoint
     await fetch(`${process.env.VERCEL_URL}/api/mail`, {
       method: "POST",
-      body: JSON.stringify({
-        email: args.email,
-        summary: messageContent,
-        title: args.title,
-        videoId: args.ytId,
-        name: args.userName,
-        bannerLink: args.thumbnailLink,
-        channelTitle: args.channelTitle,
-      }),
+      body: JSON.stringify(payload),
       headers: {
         "Content-Type": "application/json",
       },

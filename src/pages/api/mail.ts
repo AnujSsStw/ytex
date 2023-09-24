@@ -13,7 +13,7 @@ export default async function handler(
     return;
   }
 
-  const { email, summary, tilte, videoId, name, bannerLink, channelTitle } =
+  const { email, summary, title, videoId, name, bannerLink, channelTitle } =
     req.body;
   const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -29,7 +29,7 @@ export default async function handler(
     YtTemplate({
       bannerLink: bannerLink,
       summary: summary,
-      title: tilte,
+      title: title,
       firstName: name,
       ytLink: `https://www.youtube.com/watch?v=${videoId}`,
       channelTitle: channelTitle,
