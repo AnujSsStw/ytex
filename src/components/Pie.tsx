@@ -73,8 +73,8 @@ const renderActiveShape = (props: any) => {
         x={ex + (cos >= 0 ? 1 : -1) * 12}
         y={ey}
         textAnchor={textAnchor}
-        fill="#333"
-      >{`PV ${value}`}</text>
+        fill="white"
+      >{`${value} videos`}</text>
       <text
         x={ex + (cos >= 0 ? 1 : -1) * 12}
         y={ey}
@@ -82,7 +82,7 @@ const renderActiveShape = (props: any) => {
         textAnchor={textAnchor}
         fill="#999"
       >
-        {`(Rate ${(percent * 100).toFixed(2)}%)`}
+        {`${(percent * 100).toFixed(2)}%`}
       </text>
     </g>
   );
@@ -106,12 +106,12 @@ export default function OverView() {
 
   return (
     <div>
-      <PieChart width={500} height={500}>
+      <PieChart width={650} height={600}>
         <Pie
           activeIndex={activeIndex}
           activeShape={renderActiveShape}
           data={d!}
-          cx={240}
+          cx={320}
           cy={200}
           innerRadius={90}
           outerRadius={150}

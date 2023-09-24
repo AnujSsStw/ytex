@@ -17,7 +17,7 @@ export const doSomething = httpAction(async (ctx, request) => {
     // CORS headers
     headers: new Headers({
       // e.g. https://mywebsite.com
-      "Access-Control-Allow-Origin": "https://www.youtube.com",
+      "Access-Control-Allow-Origin": "*",
       Vary: "origin",
     }),
   });
